@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: "Path-spread-resolved quantum transition-state theory for proton transfer"
-message: If you use this software or manuscript, please cite it.
+message: If you use this software or manuscript, please cite it using the metadata below.
 type: software
 authors:
   - family-names: Vubangsi
@@ -20,8 +20,12 @@ keywords:
   - kinetic isotope effect
 license: MIT
 repository-code: https://github.com/vmercel/QRR-PCET
+url: https://doi.org/10.5281/zenodo.22718950
+doi: 10.5281/zenodo.22718950
+version: v1.0.1
+date-released: "2026-09-12"
 preferred-citation:
-  type: article
+  type: generic
   title: "Path-spread-resolved quantum transition-state theory for proton transfer"
   authors:
     - family-names: Vubangsi
@@ -30,6 +34,9 @@ preferred-citation:
       given-names: Fadi
     - family-names: Tchoffo
       given-names: Martin
-  journal: "Journal of Chemical Physics"
   year: 2026
-  notes: "Manuscript prepared with REVTeX 4.2 (AIP/JCP substyle)."
+  version: v1.0.1
+  publisher:
+    name: Zenodo
+  doi: 10.5281/zenodo.22718950
+  url: https://doi.org/10.5281/zenodo.22718950

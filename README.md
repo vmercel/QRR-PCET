@@ -27,16 +27,17 @@ python run_all.py --skip_experiments       # figures + compile only
 
 Figures are generated from `results/*.json`. Do not hand-edit plot values.
 
-## Zenodo
+## Archive
 
-After the GitHub repository is public:
+This version is archived on Zenodo:
 
-1. Sign in at [zenodo.org](https://zenodo.org) (GitHub login is easiest).
-2. GitHub → Settings → Applications → Zenodo, grant access to this repo.
-3. On Zenodo, *Enable* the repository. A new tag/release on GitHub mints a DOI.
-
-`.zenodo.json` in this directory supplies the deposit metadata.
+- Record: https://zenodo.org/records/22718950
+- Version DOI: [https://doi.org/10.5281/zenodo.22718950](https://doi.org/10.5281/zenodo.22718950)
+- Concept DOI (always the latest): [https://doi.org/10.5281/zenodo.22718949](https://doi.org/10.5281/zenodo.22718949)
+- GitHub tag: [`v1.0.1`](https://github.com/vmercel/QRR-PCET/tree/v1.0.1)
 
 ## Citation
 
-See `CITATION.cff`.
+Vubangsi, M., Al-Turjman, F., & Tchoffo, M. (2026). *Path-spread-resolved quantum transition-state theory for proton transfer* (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.22718950
+
+See also `CITATION.cff`.
