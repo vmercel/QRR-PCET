@@ -1,0 +1,25 @@
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.notes
+manuscriptNotes.bib
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+
+# Local TeX copies (REVTeX is provided by TeX Live / Overleaf)
+manuscript/revtex4-2.cls
+manuscript/*.rtx
+manuscript/ltx*.sty
+manuscript/textcase.sty
+manuscript/revsymb4-2.sty

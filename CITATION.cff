@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+title: "Path-spread-resolved quantum transition-state theory for proton transfer"
+message: If you use this software or manuscript, please cite it.
+type: software
+authors:
+  - family-names: Vubangsi
+    given-names: Mercel
+    email: m.vubangsi@miu.edu
+    affiliation: Maharishi International University
+  - family-names: Al-Turjman
+    given-names: Fadi
+    affiliation: Near East University
+  - family-names: Tchoffo
+    given-names: Martin
+    affiliation: University of Dschang
+keywords:
+  - proton transfer
+  - path-integral molecular dynamics
+  - quantum transition-state theory
+  - kinetic isotope effect
+license: MIT
+repository-code: https://github.com/vmercel/QRR-PCET
+preferred-citation:
+  type: article
+  title: "Path-spread-resolved quantum transition-state theory for proton transfer"
+  authors:
+    - family-names: Vubangsi
+      given-names: Mercel
+    - family-names: Al-Turjman
+      given-names: Fadi
+    - family-names: Tchoffo
+      given-names: Martin
+  journal: "Journal of Chemical Physics"
+  year: 2026
+  notes: "Manuscript prepared with REVTeX 4.2 (AIP/JCP substyle)."

@@ -1,0 +1,29 @@
+{
+  "title": "Path-spread-resolved quantum transition-state theory for proton transfer",
+  "description": "Source, figures, and numerical results for a Journal of Chemical Physics manuscript on path-spread-resolved quantum transition-state theory (QRR) for proton transfer. Prepared with REVTeX 4.2 using the official AIP/JCP document class options.",
+  "creators": [
+    {
+      "name": "Vubangsi, Mercel",
+      "affiliation": "Maharishi International University; Near East University; University of Bamenda"
+    },
+    {
+      "name": "Al-Turjman, Fadi",
+      "affiliation": "Near East University"
+    },
+    {
+      "name": "Tchoffo, Martin",
+      "affiliation": "University of Dschang"
+    }
+  ],
+  "keywords": [
+    "proton transfer",
+    "path-integral molecular dynamics",
+    "quantum transition-state theory",
+    "kinetic isotope effect",
+    "ring-polymer molecular dynamics"
+  ],
+  "license": "mit",
+  "upload_type": "publication",
+  "publication_type": "article",
+  "access_right": "open"
+}

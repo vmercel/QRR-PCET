@@ -1,0 +1,347 @@
+% Official AIP / J. Chem. Phys. class options (REVTeX 4.2).
+% Template: aiptemplate.tex / aipsamp.tex in the REVTeX distribution
+%   https://journals.aps.org/revtex/
+%   \documentclass[aip,jcp,reprint,amsmath,amssymb]{revtex4-2}
+% Use "preprint" instead of "reprint" for the 12 pt, single-column
+% double-spaced review copy requested by AIP Peer X-Press.
+\documentclass[%
+ aip,
+ jcp,
+ amsmath,amssymb,
+ reprint,
+ floatfix,
+]{revtex4-2}
+
+\usepackage{graphicx}
+\usepackage{dcolumn}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+\newcommand{\avg}[1]{\langle #1 \rangle}
+\newcommand{\xip}{\bar{\xi}_p}
+\newcommand{\chip}{\chi_p}
+\newcommand{\kB}{k_{\mathrm{B}}}
+\newcommand{\kQRR}{k_{\mathrm{QRR}}}
+\newcommand{\kQTST}{k_{\mathrm{QTST}}}
+\newcommand{\kTST}{k_{\mathrm{TST}}}
+
+\begin{document}
+
+\preprint{AIP/123-QED}
+
+\title[Path-spread-resolved QTST]{Path-spread-resolved quantum transition-state theory for proton transfer}
+
+\author{Mercel Vubangsi}
+\email{m.vubangsi@miu.edu}
+\affiliation{Department of Physics, Maharishi International University, Fairfield, Iowa 52557, USA}
+\affiliation{Research Center for AI and IoT, Near East University, Nicosia 99138, Cyprus}
+\affiliation{Department of Physics, University of Bamenda, Bambili, Cameroon}
+
+\author{Fadi Al-Turjman}
+\affiliation{Research Center for AI and IoT, Near East University, Nicosia 99138, Cyprus}
+
+\author{Martin Tchoffo}
+\affiliation{Department of Physics, University of Dschang, Dschang, Cameroon}
+
+\date{\today}
+
+\begin{abstract}
+Centroid quantum transition-state theory and ring-polymer molecular dynamics yield thermal rates, but they collapse the imaginary-time path of the transferring proton onto a single collective coordinate. Distinct compact and delocalized ring-polymer geometries that share the same centroid are therefore averaged together, and the tunneling character of the reactive flux is not resolved. We define the proton-path spread $\chip$ as the mean-square bead displacement of the ring polymer along the proton-sharing coordinate---equivalently, the squared radius of gyration projected onto that coordinate---and condition the quantum transition-state flux on $\chip$. The resulting path-spread-resolved (QRR) estimator is a decomposition of the usual centroid flux, not a competing dynamical method. For a harmonic proton mode, $\avg{\chip}$ has a closed continuum formula and an exact finite-bead counterpart; Levy-staging path-integral Monte Carlo reproduces the finite-bead result to within $1\%$. The H/D ratio of $\avg{\chip}$ interpolates between $\sqrt{m_D/m_H}$ in the deep-quantum limit and $m_D/m_H$ in the Wigner regime. Exact Eckart thermal rates at $300\,\mathrm{K}$ show that the tunneling correction $\kappa_H$ grows from $1.28$ to $2.68$ as the barrier increases from $4$ to $16\,\kB T$, while the kinetic isotope effect rises from $1.68$ to $2.28$ against a classical value of $\sqrt{2}$. On an asymmetric double well, umbrella-sampled free-energy surfaces $F(\xip,\chip)$ resolve compact and delocalized contributions at the dividing surface as a function of barrier height and isotope. A two-dimensional proton--solvent model supplies a numerical factorization diagnostic based on $\mathrm{corr}(\chip,q_s)$ at the dividing surface. The construction is an add-on collective variable for any existing path-integral code.
+\end{abstract}
+
+\keywords{proton transfer, path-integral molecular dynamics, quantum transition-state theory, kinetic isotope effect, ring-polymer molecular dynamics}
+
+\maketitle
+
+\section{Introduction}
+
+Proton transfer, and proton-coupled electron transfer (PCET) in particular, is a setting in which nuclear quantum effects, solvent reorganization, and, at electrodes, the applied potential jointly control the rate.\cite{hammes-schiffer2015,soudackov2000,marcus1956,klinman2013} Kinetic isotope effects (KIEs) and non-Arrhenius temperature dependence are the usual experimental signatures of tunneling,\cite{westheimer1961,klinman2013} but they do not by themselves identify the imaginary-time path geometry that carries the reactive flux.
+
+Path-integral methods address that geometry at the level of the thermal density matrix.\cite{feynman1948,feynman1965,chandler1981} Centroid quantum transition-state theory (QTST) replaces the classical reaction coordinate by the ring-polymer centroid and evaluates a flux through a dividing surface in centroid space.\cite{voth1989,cao1994,gillan1987,hele2013} Ring-polymer molecular dynamics (RPMD) propagates the same polymer in real time and supplies a recrossing correction to the centroid flux.\cite{craig2004,craig2005,habershon2013} Instanton theory, in the complementary deep-tunneling limit, optimizes a single dominant imaginary-time orbit.\cite{richardson2009,richardson2018} Transition-path sampling retains full real-time path information, at a cost that is not organized by equilibrium imaginary-time geometry.\cite{bolhuis2002}
+
+What these approaches do not provide is a cheap, equilibrium order parameter that distinguishes compact ring polymers (thermally activated, localized near the donor or acceptor) from delocalized polymers whose beads span the transfer coordinate (tunneling-like imaginary-time geometry). The ring-polymer radius of gyration is already used as a diagnostic of delocalization in condensed-phase proton studies.\cite{drechsel2014,marsalek2017} Here we restrict that diagnostic to the chemical sharing coordinate, give it exact harmonic limits, and use it to \emph{condition} the QTST flux.
+
+The resulting path-spread-resolved rate, which we call QRR, is
+\begin{equation}
+  \kQRR
+  =
+  \int_0^\infty d\chip\;
+  \kQTST(\chip)\,
+  \kappa(\chip)\,
+  p^\ddagger(\chip),
+  \label{eq:kQRR}
+\end{equation}
+where $p^\ddagger(\chip)$ is the distribution of path spreads at the dividing surface and $\kappa(\chip)$ is a class-conditional transmission coefficient. When $\kappa$ is taken independent of $\chip$, Eq.~\eqref{eq:kQRR} reduces identically to ordinary QTST. QRR is therefore a decomposition of a known estimator, not a claim of a more accurate thermal rate. Its value is mechanistic: it reports which imaginary-time geometries carry the flux, how that mix depends on isotope and barrier, and whether path spread couples to a solvent coordinate.
+
+Section~\ref{sec:theory} defines $\chip$ and the conditional free energy, states the solvable limits, and writes the flux decomposition. Section~\ref{sec:methods} describes the samplers. Section~\ref{sec:results} reports harmonic, Eckart, double-well, and coupled-solvent calculations. Section~\ref{sec:discussion} discusses scope and limitations. We do not report condensed-phase electrochemical simulations; those require a validated reactive potential and are left as an application of the estimator.
+
+\section{Theory}
+\label{sec:theory}
+
+\subsection{Path-spread functional}
+
+The $P$-bead ring-polymer representation of the canonical density is standard.\cite{chandler1981,cao1994} For a proton transferring between donor and acceptor oxygens we use the bead-resolved sharing coordinate
+\begin{equation}
+  \xi_p^{(s)} = r_{\mathrm{ODH}}^{(s)} - r_{\mathrm{OAH}}^{(s)},
+  \qquad
+  \xip = P^{-1}\sum_{s=1}^{P}\xi_p^{(s)}.
+\end{equation}
+The path-spread functional is the bead variance along that coordinate,
+\begin{equation}
+  \chip
+  =
+  \frac{1}{P}\sum_{s=1}^{P}
+  \bigl(\xi_p^{(s)}-\xip\bigr)^2.
+  \label{eq:chip}
+\end{equation}
+This is the squared radius of gyration of the polymer projected onto $\xi_p$. It is identically zero at $P=1$ and is non-negative for all configurations. Compact paths have $\chip$ of order the zero-point spread in a well; delocalized paths have $\chip$ large enough that beads occupy both sides of the barrier.
+
+The joint density $P(\xip,\chip)$ defines the conditional free energy
+\begin{equation}
+  F(\xip,\chip) = -\kB T\ln P(\xip,\chip)+C.
+  \label{eq:F}
+\end{equation}
+Projection onto $\xip$ recovers the centroid potential of mean force.\cite{cao1994} Slices at fixed $\xip$ resolve path class, as sketched in Fig.~\ref{fig:schematic}. A solvent or energy-gap coordinate $\lambda_s$ may be added without changing the construction; the three-dimensional surface $F(\xip,\chip,\lambda_s)$ is the natural object for PCET, but the calculations below are two-dimensional unless stated.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/fig1_schematic.pdf}
+\caption{\label{fig:schematic}
+(a)~Centroid potential of mean force $F(\xip)$, in which all ring-polymer shapes at a given centroid are averaged.
+(b)~Conditional free energy $F(\xip,\chip)$. The dashed curve is a schematic minimum-free-energy path; the star marks the dividing-surface path spread.
+}
+\end{figure*}
+
+\subsection{Flux decomposition}
+\label{sec:flux}
+
+Let $\xip^\ddagger$ locate the dividing surface. The marginal
+\begin{equation}
+  p^\ddagger(\chip)
+  =
+  \frac
+  {e^{-\beta F(\xip^\ddagger,\chip)}}
+  {\displaystyle\int d\chip'\,e^{-\beta F(\xip^\ddagger,\chip')}}
+\end{equation}
+is the probability that a dividing-surface configuration belongs to path class $\chip$. The class-conditional QTST flux is the usual positive-velocity centroid flux restricted to that class,
+\begin{equation}
+  \kQTST(\chip)
+  =
+  Z_R^{-1}
+  \bigl\langle
+    [\dot{\xip}]_+\,
+    \delta(\xip-\xip^\ddagger)\,
+    \delta(\chip[\mathbf{R}]-\chip)
+  \bigr\rangle.
+\end{equation}
+A Bennett--Chandler transmission coefficient $\kappa(\chip)$ may be attached to each class.\cite{bennett1977,chandler1978,craig2005} Integrating over $\chip$ produces Eq.~\eqref{eq:kQRR}. We emphasize two restrictions. First, $\kappa(\chip)$ computed from a Wigner series in $\hbar^2$ is a tunneling correction to a parabolic barrier,\cite{wigner1932,wigner1938} not a recrossing factor; the two must not be conflated. Second, for highly delocalized paths the Wigner series is not a controlled approximation, and a class-conditional RPMD flux-side correlation is the consistent dynamical correction.\cite{craig2005} The numerical work below reports $p^\ddagger(\chip)$ and related fractions, which are equilibrium properties, and uses exact Eckart rates when a thermal rate is required.
+
+\subsection{Solvable limits}
+
+\begin{theorem}[Classical limit]
+\label{thm:classical}
+At $P=1$, $\chip=0$ for every configuration, $p^\ddagger(\chip)=\delta(\chip)$, and $\kQRR$ reduces to classical transition-state theory.
+\end{theorem}
+
+This is immediate from Eq.~\eqref{eq:chip}. It is recorded because any numerical implementation must reproduce it.
+
+\begin{theorem}[Harmonic continuum]
+\label{thm:harmonic}
+For $V=\tfrac12 m\omega^2 q^2$,
+\begin{equation}
+  \avg{\chip}_{\infty}
+  =
+  \frac{\hbar}{2m\omega}\coth\Bigl(\frac{\beta\hbar\omega}{2}\Bigr)
+  -\frac{\kB T}{m\omega^2}.
+  \label{eq:chip_harm}
+\end{equation}
+\end{theorem}
+
+The first term is the equal-time imaginary-time correlator $G(0)$; the second is the centroid variance, which is classical for a harmonic oscillator.\cite{cao1994} The difference is non-negative because $\coth x\ge 1/x$ for $x>0$. As $T\to 0$, $\avg{\chip}\to\hbar/(2m\omega)$. As $T\to\infty$, the leading term is the Wigner correction $\hbar^2\beta/(12m)$, independent of $\omega$.\cite{wigner1932} The Matsubara-mode derivation is given in the supplementary material.
+
+\begin{proposition}[Exact finite $P$]
+\label{prop:finiteP}
+For the same oscillator discretized with $P$ beads,
+\begin{equation}
+  \avg{\chip}_P
+  =
+  \frac{1}{P}\sum_{k=1}^{P-1}
+  \frac{1}{\beta\lambda_k},
+  \qquad
+  \lambda_k
+  =
+  \frac{4mP}{\hbar^2\beta^2}\sin^2\Bigl(\frac{\pi k}{P}\Bigr)
+  +\frac{m\omega^2}{P}.
+  \label{eq:chip_P}
+\end{equation}
+As $P\to\infty$, $\avg{\chip}_P\to\avg{\chip}_{\infty}$.
+\end{proposition}
+
+Equation~\eqref{eq:chip_P} is the quantity that a primitive path-integral estimator of Eq.~\eqref{eq:chip} actually samples. Comparing Monte Carlo to Eq.~\eqref{eq:chip_harm} at modest $P$ therefore mixes statistical error with Trotter error. We compare to Eq.~\eqref{eq:chip_P} first.
+
+\begin{theorem}[Harmonic isotope scaling]
+\label{thm:isotope}
+On a shared harmonic surface ($k=m\omega^2$ fixed), $\avg{\chip}_H>\avg{\chip}_D$ for all $T>0$. The ratio $\mathcal{R}=\avg{\chip}_H/\avg{\chip}_D$ satisfies
+\begin{equation}
+  \mathcal{R}(T\to 0)=\sqrt{m_D/m_H},
+  \qquad
+  \mathcal{R}(T\to\infty)=m_D/m_H.
+\end{equation}
+\end{theorem}
+
+The low-temperature limit is the ratio of zero-point amplitudes. The high-temperature limit is the ratio of leading Wigner corrections. Both statements use Eq.~\eqref{eq:chip_harm} and do not extend automatically to anharmonic barriers; they are tests of the estimator, not predictions for condensed-phase PCET.
+
+\begin{theorem}[Factorization]
+\label{thm:factorize}
+If $F(\xip,\chip,\lambda_s)=F_p(\xip,\chip)+F_s(\lambda_s)$, then $p^\ddagger(\chip)$ is independent of $\lambda_s$ and the $\chip$ integral in Eq.~\eqref{eq:kQRR} reduces to ordinary QTST when $\kappa$ is class-independent.
+\end{theorem}
+
+The mixed derivative $\partial^2 F/\partial\chip\partial\lambda_s$, or the dividing-surface correlation $\mathrm{corr}(\chip,\lambda_s)$, is then a numerical diagnostic of proton--solvent quantum reorganization beyond a product Marcus picture.\cite{marcus1956,soudackov2000}
+
+\section{Methods}
+\label{sec:methods}
+
+Path-integral Monte Carlo uses Levy staging of the free-particle bridge,\cite{ceperley1995,tuckerman1993} which samples the ring-polymer springs exactly, together with a Metropolis decision on the physical potential and a rigid centroid move. The primitive estimator of $\chip$ is the bead variance. For the harmonic oscillator we also evaluate Eqs.~\eqref{eq:chip_harm} and \eqref{eq:chip_P} in closed form.
+
+Asymmetric double-well (ADW) free energies are obtained from one-dimensional umbrella sampling along $\xip$\cite{torrie1977} with harmonic restraints, reweighted by the weighted histogram analysis method (WHAM).\cite{kumar1992} Two-dimensional histograms of $(\xip,\chip)$ use the same WHAM weights. The delocalized fraction at the dividing surface is
+\begin{equation}
+  f_{\mathrm{deloc}}
+  =
+  \int_{\chip\ge 2\chi_c} p^\ddagger(\chip)\,d\chip,
+\end{equation}
+with the threshold $\chi_c=\hbar/(2m\omega^*)$ evaluated at $\omega^*=1000\,\mathrm{cm}^{-1}$, giving $\chi_c\approx 0.010\,\text{\AA}^2$. Compact and intermediate classes use $0.5\chi_c$ and $2\chi_c$ as bookkeeping cuts; the continuous $p^\ddagger(\chip)$ is the primary object.
+
+Exact thermal rates for the symmetric Eckart barrier $V(x)=V_0\mathrm{sech}^2(x/a)$ are
+\begin{equation}
+  k
+  =
+  \frac{1}{2\pi\hbar Q_r}
+  \int_0^\infty dE\,e^{-\beta E}T(E),
+\end{equation}
+with $T(E)$ the Connor transmission probability\cite{eckart1930} and $Q_r=(m/2\pi\hbar^2\beta)^{1/2}$. Classical TST is $k_{\mathrm{TST}}=\sqrt{\kB T/(2\pi m)}\,e^{-\beta V_0}$. The Wigner estimate multiplies $k_{\mathrm{TST}}$ by $1+(\beta\hbar\omega_b)^2/24$, where $\omega_b=\sqrt{2V_0/(ma^2)}$. All Eckart integrals use a logarithmically stable evaluation of $T(E)$.
+
+A two-dimensional model
+\begin{equation}
+  V(q_p,q_s)
+  =
+  V_{\mathrm{ADW}}(q_p)
+  +\tfrac12 k_s q_s^2
+  +\kappa_c q_p q_s
+\end{equation}
+treats the proton as a ring polymer and the solvent coordinate as classical. The factorization diagnostic is $\mathrm{corr}(\chip,q_s)$ restricted to $|\xip|<0.10\,\text{\AA}$.
+
+Temperatures are $300\,\mathrm{K}$ unless noted. Masses are $1$ and $2\,\mathrm{amu}$. Random number generators are seeded at $42$. Code and JSON outputs are in the repository accompanying this article.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Harmonic oscillator}
+
+Figure~\ref{fig:harmonic} compares Eq.~\eqref{eq:chip_harm} with Levy-staging Monte Carlo for a $1000\,\mathrm{cm}^{-1}$ mode over $100$--$700\,\mathrm{K}$. At $300\,\mathrm{K}$ the continuum values are $\avg{\chip}_H=0.01011\,\text{\AA}^2$ and $\avg{\chip}_D=0.00572\,\text{\AA}^2$. With $P=64$ (H) and $P=32$ (D), the exact finite-bead formula differs from the continuum by $0.12\%$ and $0.29\%$, respectively, and the Monte Carlo root-mean-square relative error against Eq.~\eqref{eq:chip_P} is $0.56\%$ (H) and $1.03\%$ (D).
+
+The isotope ratio $\mathcal{R}(T)$ increases from $1.52$ at $100\,\mathrm{K}$ toward $\sqrt{2}$ as $T$ is lowered, and from $1.77$ at $300\,\mathrm{K}$ to $1.94$ at $700\,\mathrm{K}$, approaching $2$ from below, as required by Theorem~\ref{thm:isotope}. Figure~\ref{fig:beads} shows that the primitive estimator tracks Eq.~\eqref{eq:chip_P} from $P=4$ to $P=128$ and that the Trotter error relative to the continuum is already below $0.5\%$ at $P=32$ for this frequency and temperature. A staging move that draws Brownian-bridge \emph{marginals} independently, rather than the sequential L\'evy construction, produces a spurious increase of $\avg{\chip}$ with $P$ and should not be used.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/fig2_harmonic.pdf}
+\caption{\label{fig:harmonic}
+Harmonic path spread for $\omega=1000\,\mathrm{cm}^{-1}$.
+(a)~$\avg{\chip}(T)$ from Eq.~\eqref{eq:chip_harm} (lines) and PIMC (symbols).
+(b)~Isotope ratio, with deep-quantum ($\sqrt{2}$) and Wigner ($2$) limits.
+}
+\end{figure*}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.52\linewidth]{../figures/fig3_beads.pdf}
+\caption{\label{fig:beads}
+Bead convergence of $\avg{\chip}_H$ at $300\,\mathrm{K}$.
+The primitive PIMC estimator follows the exact finite-$P$ formula, Eq.~\eqref{eq:chip_P}, and both approach the continuum, Eq.~\eqref{eq:chip_harm}.
+}
+\end{figure}
+
+\subsection{Eckart barrier}
+
+The symmetric Eckart barrier with width $a=0.50\,\text{\AA}$ provides thermal rates that do not depend on path-integral sampling. Figure~\ref{fig:eckart}(a) shows the exact tunneling correction $\kappa=k/k_{\mathrm{TST}}$ at $300\,\mathrm{K}$. For H, $\kappa$ increases from $1.28$ at $V_0=4\,\kB T$ to $2.68$ at $V_0=16\,\kB T$; the corresponding Wigner factors are $1.22$ and $1.86$. Wigner is therefore a useful first correction at moderate $\hbar\omega_b/\kB T$ and underestimates the exact $\kappa$ once $\hbar\omega_b/\kB T\gtrsim 4$. Deuterium remains closer to TST, as expected from the lower barrier frequency.
+
+The exact KIE [Fig.~\ref{fig:eckart}(b)] is $1.68$ at $4\,\kB T$ and $2.28$ at $16\,\kB T$. Classical TST contributes only $\sqrt{m_D/m_H}=\sqrt{2}\approx 1.414$, independent of barrier height. The Wigner KIE tracks the exact result qualitatively ($1.55$ to $1.84$) but lags at the highest barriers. These numbers set the scale of the nuclear quantum effect that a path-spread decomposition is intended to resolve: when $\kappa_H$ is of order two, a non-negligible fraction of the flux is expected to occupy delocalized imaginary-time paths.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/fig4_eckart.pdf}
+\caption{\label{fig:eckart}
+Symmetric Eckart barrier, $a=0.50\,\text{\AA}$, $T=300\,\mathrm{K}$.
+(a)~Exact and Wigner tunneling corrections versus barrier height.
+(b)~Kinetic isotope effect. Classical TST is $\sqrt{2}$ at every $V_0$.
+}
+\end{figure*}
+
+\subsection{Asymmetric double well}
+
+The ADW $V(q)=V_0[(q/q_0)^2-1]^2+\alpha q$ with $q_0=0.70\,\text{\AA}$ is a bound proton-transfer model. Figure~\ref{fig:landscape} shows WHAM-reweighted $F(\xip,\chip)$ for H at $V_0=2\,\kB T$ and $8\,\kB T$. The centroid dividing surface $\xip=0$ cuts a ridge whose $\chip$ support is broader than in the wells. Figure~\ref{fig:mechanism}(a) reports $f_{\mathrm{deloc}}$ versus $V_0$. For H the delocalized fraction is $0.18$ at $2\,\kB T$ and $0.23$ at $8\,\kB T$; for D it is an order of magnitude smaller ($0.014$ to $0.045$) and increases with barrier height. The dividing-surface mean spread [Fig.~\ref{fig:mechanism}(b)] is $\avg{\chip}_\ddagger^{\mathrm{H}}\approx 0.014$--$0.015\,\text{\AA}^2$ against $\avg{\chip}_\ddagger^{\mathrm{D}}\approx 0.007$--$0.008\,\text{\AA}^2$. Centroid barriers from WHAM are lower for H than for D ($4.25$ versus $4.60\,\mathrm{kJ\,mol}^{-1}$ at $2\,\kB T$; $15.9$ versus $17.6\,\mathrm{kJ\,mol}^{-1}$ at $8\,\kB T$), as expected from greater zero-point and tunneling contributions.
+
+These are equilibrium path-class statistics, not rates. We do not convert $f_{\mathrm{deloc}}$ into a claimed improvement over RPMD. Combined with the Eckart KIEs of Fig.~\ref{fig:eckart}, they show that the same conditions that enhance tunneling in an exact one-dimensional rate also enhance the weight of delocalized ring-polymer geometries at an ADW dividing surface, and that the isotope contrast in $f_{\mathrm{deloc}}$ is large.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/fig5_landscape.pdf}
+\caption{\label{fig:landscape}
+WHAM free energy $F(\xip,\chip)$ for the asymmetric double well (H, $T=300\,\mathrm{K}$, $P=32$).
+The vertical line is the centroid dividing surface.
+}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/fig6_mechanism.pdf}
+\caption{\label{fig:mechanism}
+ADW dividing-surface statistics versus barrier height.
+(a)~Delocalized-path fraction $f_{\mathrm{deloc}}$ for H and D.
+(b)~Mean path spread $\avg{\chip}_\ddagger$.
+}
+\end{figure*}
+
+\subsection{Proton--solvent coupling}
+
+Theorem~\ref{thm:factorize} is tested on the bilinear model at $V_0=4\,\kB T$. Figure~\ref{fig:coupling}(a) shows $\mathrm{corr}(\chip,q_s)$ at the dividing surface. At $\kappa_c=0$ the correlation is $-0.06$ from $737$ dividing-surface samples, consistent with noise. At $\kappa_c=4\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-2}$ it is $-0.16$, but the number of crossings drops to $320$ because the bilinear term tilts the well, so the present scan does not support a precise slope of correlation versus coupling. Figure~\ref{fig:coupling}(b) shows $f_{\mathrm{deloc}}$ on the same trajectories. The practical point is that the diagnostic is a covariance of two collective variables already available in a path-integral run; a production application would accumulate it over umbrella windows rather than unbiased dynamics.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/fig7_coupling.pdf}
+\caption{\label{fig:coupling}
+Two-dimensional proton--solvent model.
+(a)~Dividing-surface correlation of path spread with the classical solvent coordinate.
+(b)~Delocalized fraction versus coupling.
+}
+\end{figure*}
+
+\section{Discussion}
+\label{sec:discussion}
+
+QRR does not replace RPMD, instanton theory, or vibronic PCET rate laws.\cite{craig2005,richardson2018,soudackov2000,goldsmith2019} RPMD remains the appropriate dynamical correction to centroid QTST in the crossover regime; instanton theory remains the appropriate semiclassical description when a single tunneling orbit dominates; Hammes--Schiffer vibronic theory remains the appropriate nonadiabatic framework when electron-proton nonadiabaticity is essential. What QRR adds is an equilibrium resolution of the imaginary-time geometries that those methods otherwise average or optimize.
+
+Two consequences follow for condensed-phase PCET, as hypotheses rather than numerical claims. First, an increase of the observed KIE with thermodynamic driving force, reported in several electrochemical proton-discharge studies,\cite{goldsmith2019,koper2011} should coincide with an increase of $\Delta f_{\mathrm{deloc}}=f_{\mathrm{deloc}}^{\mathrm{H}}-f_{\mathrm{deloc}}^{\mathrm{D}}$ if the extra isotope effect is carried by delocalized paths. Second, a breakdown of $F=F_p+F_s$ at the dividing surface is a concrete, computable signature that solvent reorganization and proton delocalization are not statistically independent, which is outside the product structure of Marcus theory. Testing either statement requires a reactive potential for a specific interface or enzyme, which is not constructed here.
+
+Limitations are sharp. The path-spread functional is a property of the imaginary-time polymer, not a real-time spectroscopic observable; neutron Compton profiles and related measurements constrain momentum distributions, not $\chip$ directly. The three-class threshold $\chi_c$ is a bookkeeping device tied to a reference frequency; any application should report the full $p^\ddagger(\chip)$. Class-conditional recrossing is not computed. The models are one- and two-dimensional. Finite-$P$ errors in $\chip$ are under control for the $1000\,\mathrm{cm}^{-1}$ mode at $P\ge 32$, but stiffer stretches will need more beads or a virial estimator.
+
+\section{Conclusions}
+
+We have defined a projected ring-polymer path spread $\chip$ for proton transfer, derived its harmonic continuum and finite-bead limits, and used it to decompose the centroid QTST flux by imaginary-time geometry. Levy-staging Monte Carlo reproduces the exact finite-bead harmonic formula to about one percent. Exact Eckart rates quantify the tunneling corrections and KIEs that the decomposition is meant to resolve. Double-well landscapes and a coupled solvent coordinate show that delocalized-path weight and proton--solvent correlation are computable equilibrium diagnostics. The estimator is a collective variable, not a new dynamics, and can be accumulated in any path-integral molecular dynamics run.
+
+\begin{acknowledgments}
+Computational work was performed on local workstations. No external funding is declared.
+\end{acknowledgments}
+
+\section*{Data Availability Statement}
+The data that support the findings of this study are available within the article and its supplementary material. Analysis scripts and JSON result files are included with the source distribution.
+
+\bibliographystyle{aipnum4-2}
+\bibliography{../references/references}
+
+\end{document}

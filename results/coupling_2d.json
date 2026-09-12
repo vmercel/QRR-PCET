@@ -1,0 +1,58 @@
+{
+  "description": "2D proton-solvent factorization diagnostic",
+  "T_K": 300.0,
+  "V0_over_kT": 4.0,
+  "k_s": 2.0,
+  "kappa_c": [
+    0.0,
+    0.5,
+    1.0,
+    2.0,
+    4.0
+  ],
+  "P": 32,
+  "n_steps": 80000,
+  "chi_c_ang2": 0.01,
+  "scan": [
+    {
+      "kappa_c": 0.0,
+      "n_ds": 737,
+      "cov_chi_qs": -0.00071103,
+      "corr_chi_qs": -0.05502,
+      "f_deloc_ds": 0.3216,
+      "chi_mean_ds": 0.016937
+    },
+    {
+      "kappa_c": 0.5,
+      "n_ds": 897,
+      "cov_chi_qs": -0.00121101,
+      "corr_chi_qs": -0.12309,
+      "f_deloc_ds": 0.2152,
+      "chi_mean_ds": 0.01474
+    },
+    {
+      "kappa_c": 1.0,
+      "n_ds": 957,
+      "cov_chi_qs": -0.00091981,
+      "corr_chi_qs": -0.07928,
+      "f_deloc_ds": 0.1902,
+      "chi_mean_ds": 0.014534
+    },
+    {
+      "kappa_c": 2.0,
+      "n_ds": 857,
+      "cov_chi_qs": -0.00068764,
+      "corr_chi_qs": -0.06165,
+      "f_deloc_ds": 0.2229,
+      "chi_mean_ds": 0.014276
+    },
+    {
+      "kappa_c": 4.0,
+      "n_ds": 320,
+      "cov_chi_qs": -0.00125064,
+      "corr_chi_qs": -0.15896,
+      "f_deloc_ds": 0.0594,
+      "chi_mean_ds": 0.011014
+    }
+  ]
+}

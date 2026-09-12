@@ -1,0 +1,119 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[margin=1in]{geometry}
+\linespread{1.15}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+
+\newcommand{\avg}[1]{\langle #1 \rangle}
+\newcommand{\xip}{\bar{\xi}_p}
+\newcommand{\chip}{\chi_p}
+\newcommand{\kB}{k_{\mathrm{B}}}
+
+\begin{document}
+\title{Supplementary material:\\
+Path-spread-resolved quantum transition-state theory for proton transfer}
+\author{Mercel Vubangsi, Fadi Al-Turjman, and Martin Tchoffo}
+\date{}
+\maketitle
+
+\section{Proof of the harmonic continuum formula}
+
+The Euclidean action of a harmonic oscillator $V=\tfrac12 m\omega^2 q^2$ is diagonal in Matsubara modes
+\begin{equation}
+  q(\tau)=\frac{1}{\beta\hbar}\sum_{n=-\infty}^{\infty}\tilde q_n e^{i\omega_n\tau},
+  \qquad
+  \omega_n=\frac{2\pi n}{\beta\hbar}.
+\end{equation}
+Each mode is Gaussian with $\avg{|\tilde q_n|^2}=\kB T\,\beta\hbar/[m(\omega_n^2+\omega^2)]$. The equal-time correlator is
+\begin{equation}
+  G(0)
+  =
+  \frac{\kB T}{m}\sum_{n=-\infty}^{\infty}\frac{1}{\omega_n^2+\omega^2}
+  =
+  \frac{\hbar}{2m\omega}\coth\Bigl(\frac{\beta\hbar\omega}{2}\Bigr),
+\end{equation}
+where the sum is the standard cotangent partial-fraction identity. The $n=0$ sector is the centroid, with variance $\kB T/(m\omega^2)$, which is the classical Boltzmann result for a harmonic well.\cite{cao1994} Subtracting gives
+\begin{equation}
+  \avg{\chip}=G(0)-\avg{\xip^2},
+\end{equation}
+which is Eq.~(8) of the main text. Non-negativity follows from $\coth x\ge 1/x$.
+
+Low $T$: $\coth(\beta\hbar\omega/2)\to 1$ and the centroid term vanishes, so $\avg{\chip}\to\hbar/(2m\omega)$. High $T$: $\coth x=1/x+x/3+O(x^3)$ yields $\avg{\chip}\to\hbar^2\beta/(12m)+O(\beta^3)$.
+
+\section{Exact finite-bead formula}
+
+The $P$-bead ring polymer is a cyclic Gaussian with eigenvalues
+\begin{equation}
+  \lambda_k
+  =
+  \frac{4mP}{\hbar^2\beta^2}\sin^2(\pi k/P)
+  +\frac{m\omega^2}{P},
+  \qquad
+  k=0,\ldots,P-1.
+\end{equation}
+The $k=0$ eigenvalue is $m\omega^2/P$ and produces the centroid variance $\kB T/(m\omega^2)$. The primitive bead variance minus the centroid variance is
+\begin{equation}
+  \avg{\chip}_P
+  =
+  \frac{1}{P}\sum_{k=1}^{P-1}\frac{1}{\beta\lambda_k}.
+\end{equation}
+As $P\to\infty$ the sum becomes the Matsubara sum of the previous section.
+
+\section{Isotope ordering (harmonic)}
+
+With $k=m\omega^2$ fixed, $\omega(m)=\sqrt{k/m}$ and
+\begin{equation}
+  g(m)
+  =
+  \frac{\hbar}{2\sqrt{km}}\coth\Bigl(\frac{\beta\hbar\sqrt{k/m}}{2}\Bigr)
+  -\frac{\kB T}{k}.
+\end{equation}
+The second term is mass-independent. The first is $( \kB T/k)\,u\coth u$ with $u=\beta\hbar\sqrt{k/m}/2$. Since $u\coth u$ is strictly increasing for $u>0$ and $u$ is strictly decreasing in $m$, $g(m)$ is strictly decreasing, so $g(m_H)>g(m_D)$. The $T\to 0$ and $T\to\infty$ ratios follow by substituting the limits of the previous section. These statements are harmonic; they are not theorems for a general anharmonic surface.
+
+\section{Computational parameters}
+
+\begin{table}[htbp]
+\centering
+\caption{Production parameters.}
+\begin{tabular}{ll}
+\toprule
+Quantity & Value \\
+\midrule
+Harmonic $\omega$ & $1000\,\mathrm{cm}^{-1}$ \\
+Harmonic $P$ (H, D) & $64$, $32$ \\
+Harmonic production steps & $8\times 10^4$ \\
+Eckart width $a$ & $0.50\,\text{\AA}$ \\
+Eckart $T$ & $300\,\mathrm{K}$ \\
+ADW $q_0$ & $0.70\,\text{\AA}$ \\
+ADW $\alpha$ & $0.025\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-1}$ \\
+ADW umbrellas & $11$ windows in $[-1,1]\,\text{\AA}$ \\
+ADW $k_{\mathrm{umb}}$ & $80\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-2}$ \\
+ADW $P$ (H, D) & $32$, $24$ \\
+ADW steps per window & $5\times 10^4$ \\
+2D $k_s$ & $2.0\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-2}$ \\
+RNG seed & $42$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Staging proposals use the sequential L\'evy construction of the free-particle bridge (endpoints of a segment of length $L=P/4$ held fixed; interior beads drawn conditionally). Independent sampling of Brownian-bridge marginals is incorrect and inflates $\chip$ at large $P$.
+
+\section{Reproducibility}
+
+\begin{verbatim}
+python run_all.py --n_steps 80000 --n_equil 15000
+python run_all.py --skip_experiments   # figures + compile
+\end{verbatim}
+Dependencies: \texttt{numpy>=1.26}, \texttt{scipy>=1.12}, \texttt{matplotlib>=3.8}.
+All JSON result files used to generate the figures are in \texttt{results/}.
+
+\bibliographystyle{plain}
+\bibliography{../references/references}
+
+\end{document}
