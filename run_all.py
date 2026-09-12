@@ -19,11 +19,8 @@ SUPP_DIR = os.path.join(ROOT, "supplementary")
 CANONICAL_FIGURES = {
     "fig1_schematic.pdf", "fig1_schematic.png",
     "fig2_harmonic.pdf", "fig2_harmonic.png",
-    "fig3_beads.pdf", "fig3_beads.png",
     "fig4_eckart.pdf", "fig4_eckart.png",
     "fig5_landscape.pdf", "fig5_landscape.png",
-    "fig6_mechanism.pdf", "fig6_mechanism.png",
-    "fig7_coupling.pdf", "fig7_coupling.png",
 }
 
 EXPERIMENT_SCRIPTS = [
@@ -36,11 +33,8 @@ EXPERIMENT_SCRIPTS = [
 FIGURE_SCRIPTS = [
     "fig1_schematic.py",
     "fig2_harmonic.py",
-    "fig3_beads.py",
     "fig4_eckart.py",
     "fig5_landscape.py",
-    "fig6_mechanism.py",
-    "fig7_coupling.py",
 ]
 
 
