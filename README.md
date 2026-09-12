@@ -27,6 +27,15 @@ python run_all.py --skip_experiments       # figures + compile only
 
 Figures are generated from `results/*.json`. Do not hand-edit plot values.
 
+Key result files:
+
+- `results/harmonic_benchmark.json` — exact and PIMC $\langle\chi_p\rangle$
+- `results/eckart_rates.json` — analytic Eckart rates and KIEs
+- `results/eckart_pimc.json` — umbrella-PIMC centroid QTST (QRR at $\kappa=1$)
+- `results/adw_landscapes.json` — ADW WHAM PMFs and $p^\ddagger(\chi_p)$
+
+Deuterium centroid QTST at $V_0=12\,k_{\mathrm{B}}T$ is flagged `reliable: false` and is omitted from the rate comparison.
+
 ## Archive
 
 This version is archived on Zenodo:

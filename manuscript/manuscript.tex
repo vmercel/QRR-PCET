@@ -30,6 +30,7 @@
 \newcommand{\kQRR}{k_{\mathrm{QRR}}}
 \newcommand{\kQTST}{k_{\mathrm{QTST}}}
 \newcommand{\kTST}{k_{\mathrm{TST}}}
+\newcommand{\kcTST}{k_{\mathrm{cTST}}}
 
 \begin{document}
 
@@ -52,7 +53,7 @@
 \date{\today}
 
 \begin{abstract}
-Centroid quantum transition-state theory and ring-polymer molecular dynamics yield thermal rates, but they collapse the imaginary-time path of the transferring proton onto a single collective coordinate. We define the proton-path spread $\chip$ as the mean-square bead displacement of the ring polymer along the proton-sharing coordinate---the squared radius of gyration projected onto that coordinate---and use it to resolve the centroid dividing-surface ensemble by imaginary-time geometry. The associated path-spread-resolved (QRR) formula is a decomposition of the usual centroid flux, not a more accurate dynamical rate. For a harmonic proton mode, $\avg{\chip}$ has a closed continuum formula and an exact finite-bead counterpart; Levy-staging path-integral Monte Carlo reproduces the finite-bead result to within $1\%$. The H/D ratio of $\avg{\chip}$ interpolates between $\sqrt{m_D/m_H}$ as $T\to 0$ and $m_D/m_H$ as $T\to\infty$. Exact Eckart rates at $300\,\mathrm{K}$ give a tunneling correction $\kappa_H=1.28$--$2.68$ and a kinetic isotope effect of $1.68$--$2.28$ as the barrier rises from $4$ to $16\,\kB T$, against a classical isotope factor of $\sqrt{2}$. On an asymmetric double well, umbrella sampling shows that the dividing-surface path-spread distribution for H is systematically broader than for D ($f_{\mathrm{deloc}}^{\mathrm{H}}\approx 0.18$--$0.23$ versus $f_{\mathrm{deloc}}^{\mathrm{D}}\approx 0.01$--$0.04$). We do not report a QRR rate, nor a condensed-phase application. The estimator is a collective variable that can be accumulated in any existing path-integral code.
+Centroid quantum transition-state theory and ring-polymer molecular dynamics yield thermal rates, but they collapse the imaginary-time path of the transferring proton onto a single collective coordinate. We define the proton-path spread $\chip$ as the mean-square bead displacement of the ring polymer along the proton-sharing coordinate---the squared radius of gyration projected onto that coordinate---and use it to resolve the centroid dividing-surface ensemble. The associated path-spread-resolved (QRR) formula decomposes the usual centroid flux. When the transmission coefficient does not depend on path class, that integral is identically the centroid QTST rate $\kcTST$. For a harmonic proton mode, $\avg{\chip}$ has a closed continuum formula and an exact finite-bead counterpart; L\'evy-staging path-integral Monte Carlo reproduces the finite-bead result to within $1\%$. The H/D ratio interpolates between $\sqrt{m_D/m_H}$ as $T\to 0$ and $m_D/m_H$ as $T\to\infty$. Exact Eckart rates at $300\,\mathrm{K}$ give a tunneling correction $\kappa_H=1.28$--$2.68$ and a kinetic isotope effect of $1.68$--$2.28$ as the barrier rises from $4$ to $16\,\kB T$ (classical isotope factor $\sqrt{2}$). Umbrella PIMC centroid QTST, which is QRR at $\kappa=1$, overestimates those exact rates by $13$--$40\%$ on converged points while remaining above TST; the Wigner series undershoots for H. The same dividing-surface ensemble has $f_{\mathrm{deloc}}^{\mathrm{H}}\approx 0.22$--$0.38$ versus $f_{\mathrm{deloc}}^{\mathrm{D}}\approx 0.02$. An asymmetric double well shows the same isotope contrast ($0.18$--$0.23$ versus $0.01$--$0.04$). We do not compute a class-conditional recrossing factor. The estimator can be accumulated in any existing path-integral code.
 \end{abstract}
 
 \keywords{proton transfer, path-integral molecular dynamics, quantum transition-state theory, kinetic isotope effect, ring-polymer molecular dynamics}
@@ -77,9 +78,9 @@ The resulting path-spread-resolved rate, which we call QRR, is
   p^\ddagger(\chip),
   \label{eq:kQRR}
 \end{equation}
-where $p^\ddagger(\chip)$ is the distribution of path spreads at the dividing surface and $\kappa(\chip)$ is a class-conditional transmission coefficient. When $\kappa$ is taken independent of $\chip$, Eq.~\eqref{eq:kQRR} reduces identically to ordinary QTST. QRR is therefore a decomposition of a known estimator, not a claim of a more accurate thermal rate. Its value is mechanistic: it reports which imaginary-time geometries carry the flux, how that mix depends on isotope and barrier, and whether path spread couples to a solvent coordinate.
+where $p^\ddagger(\chip)$ is the distribution of path spreads at the dividing surface and $\kappa(\chip)$ is a class-conditional transmission coefficient. When $\kappa$ is taken independent of $\chip$, Eq.~\eqref{eq:kQRR} reduces identically to ordinary centroid QTST: $\kQRR=\kcTST$. QRR is therefore a decomposition of a known estimator, not a claim of a more accurate thermal rate. Its value is mechanistic: it reports which imaginary-time geometries carry the flux, how that mix depends on isotope and barrier, and whether path spread couples to a solvent coordinate.
 
-Section~\ref{sec:theory} defines $\chip$ and the conditional free energy, states the solvable limits, and writes the flux decomposition. Section~\ref{sec:methods} describes the samplers. Section~\ref{sec:results} reports harmonic, Eckart, and double-well calculations. Section~\ref{sec:discussion} discusses scope and limitations. We do not report condensed-phase electrochemical simulations; those require a validated reactive potential and are left as an application of the estimator.
+Section~\ref{sec:theory} defines $\chip$ and the conditional free energy, states the solvable limits, and writes the flux decomposition. Section~\ref{sec:methods} describes the samplers. Section~\ref{sec:results} reports harmonic benchmarks, compares $\kcTST$ (QRR at $\kappa=1$) to exact Eckart rates, and resolves the dividing-surface ensemble of an asymmetric double well. Section~\ref{sec:discussion} discusses scope and limitations. We do not report condensed-phase electrochemical simulations; those require a validated reactive potential and are left as an application of the estimator.
 
 \section{Theory}
 \label{sec:theory}
@@ -141,7 +142,12 @@ is the probability that a dividing-surface configuration belongs to path class $
     \delta(\chip[\mathbf{R}]-\chip)
   \bigr\rangle.
 \end{equation}
-A Bennett--Chandler transmission coefficient $\kappa(\chip)$ may be attached to each class.\cite{bennett1977,chandler1978,craig2005} Integrating over $\chip$ produces Eq.~\eqref{eq:kQRR}. We emphasize two restrictions. First, $\kappa(\chip)$ computed from a Wigner series in $\hbar^2$ is a tunneling correction to a parabolic barrier,\cite{wigner1932,wigner1938} not a recrossing factor; the two must not be conflated. Second, for highly delocalized paths the Wigner series is not a controlled approximation, and a class-conditional RPMD flux-side correlation is the consistent dynamical correction.\cite{craig2005} The numerical work below reports $p^\ddagger(\chip)$ and related fractions, which are equilibrium properties, and uses exact Eckart rates when a thermal rate is required.
+A Bennett--Chandler transmission coefficient $\kappa(\chip)$ may be attached to each class.\cite{bennett1977,chandler1978,craig2005} Integrating over $\chip$ produces Eq.~\eqref{eq:kQRR}. If $\kappa$ does not depend on $\chip$, the integral collapses to $\kQRR=\kappa\,\kQTST$, and the choice $\kappa=1$ gives
+\begin{equation}
+  \kQRR(\kappa=1)\equiv\kcTST.
+  \label{eq:identity}
+\end{equation}
+The Eckart calculations below evaluate this identity by computing $\kcTST$ from umbrella PIMC and comparing it to the exact scattering rate. We emphasize two further restrictions. First, a Wigner series in $\hbar^2$ is a tunneling correction to a parabolic barrier,\cite{wigner1932,wigner1938} not a recrossing factor; the two must not be conflated. Second, a $\chip$-dependent $\kappa$ is not computed: for highly delocalized paths the Wigner series is not a controlled approximation, and a class-conditional RPMD flux-side correlation would be the consistent dynamical correction.\cite{craig2005} Inventing a $\kappa(\chip)$ from the centroid potential of mean force would double-count the barrier and cannot repair the QTST overestimate documented below.
 
 \subsection{Solvable limits}
 
@@ -152,7 +158,7 @@ At $P=1$, Eq.~\eqref{eq:chip} gives $\chip=0$ identically, so $p^\ddagger(\chip)
 
 \begin{theorem}[Harmonic continuum]
 \label{thm:harmonic}
-For $V=\tfrac12 m\omega^2 q^2$,
+A harmonic mode $V=\tfrac12 m\omega^2 q^2$ has
 \begin{equation}
   \avg{\chip}_{\infty}
   =
@@ -186,7 +192,7 @@ Equation~\eqref{eq:chip_P} is the quantity that a primitive path-integral estima
 
 \begin{corollary}[Harmonic isotope scaling]
 \label{cor:isotope}
-On a shared harmonic surface ($k=m\omega^2$ fixed), $\avg{\chip}_H>\avg{\chip}_D$ for all $T>0$. The ratio $\mathcal{R}=\avg{\chip}_H/\avg{\chip}_D$ satisfies
+On a shared harmonic surface with $k=m\omega^2$ held fixed, $\avg{\chip}_H>\avg{\chip}_D$ at every $T>0$. The ratio $\mathcal{R}=\avg{\chip}_H/\avg{\chip}_D$ satisfies
 \begin{equation}
   \mathcal{R}(T\to 0)=\sqrt{m_D/m_H},
   \qquad
@@ -206,7 +212,7 @@ A nonzero mixed derivative $\partial^2 F/\partial\chip\partial\lambda_s$, or a n
 \section{Methods}
 \label{sec:methods}
 
-Path-integral Monte Carlo uses Levy staging of the free-particle bridge,\cite{ceperley1995,tuckerman1993} which samples the ring-polymer springs exactly, together with a Metropolis decision on the physical potential and a rigid centroid move. The primitive estimator of $\chip$ is the bead variance. For the harmonic oscillator we also evaluate Eqs.~\eqref{eq:chip_harm} and \eqref{eq:chip_P} in closed form.
+Path-integral Monte Carlo uses L\'evy staging of the free-particle bridge,\cite{ceperley1995,tuckerman1993} which samples the ring-polymer springs exactly, together with a Metropolis decision on the physical potential and a rigid centroid move. The primitive estimator of $\chip$ is the bead variance. For the harmonic oscillator we also evaluate Eqs.~\eqref{eq:chip_harm} and \eqref{eq:chip_P} in closed form.
 
 Asymmetric double-well (ADW) free energies are obtained from one-dimensional umbrella sampling along $\xip$\cite{torrie1977} with harmonic restraints, reweighted by the weighted histogram analysis method (WHAM).\cite{kumar1992} Two-dimensional histograms of $(\xip,\chip)$ use the same WHAM weights. The delocalized fraction at the dividing surface is
 \begin{equation}
@@ -223,7 +229,16 @@ Exact thermal rates for the symmetric Eckart barrier $V(x)=V_0\mathrm{sech}^2(x/
   \frac{1}{2\pi\hbar Q_r}
   \int_0^\infty dE\,e^{-\beta E}T(E),
 \end{equation}
-with $T(E)$ the exact transmission probability of the symmetric Eckart barrier\cite{eckart1930} and $Q_r=(m/2\pi\hbar^2\beta)^{1/2}$. Classical TST is $k_{\mathrm{TST}}=\sqrt{\kB T/(2\pi m)}\,e^{-\beta V_0}$. The Wigner estimate multiplies $k_{\mathrm{TST}}$ by $1+(\beta\hbar\omega_b)^2/24$, where $\omega_b=\sqrt{2V_0/(ma^2)}$. All Eckart integrals use a logarithmically stable evaluation of $T(E)$.
+with $T(E)$ the exact transmission probability of the symmetric Eckart barrier\cite{eckart1930} and $Q_r=(m/2\pi\hbar^2\beta)^{1/2}$. Classical TST is $k_{\mathrm{TST}}=\sqrt{\kB T/(2\pi m)}\,e^{-\beta V_0}$. The Wigner estimate multiplies $k_{\mathrm{TST}}$ by $1+(\beta\hbar\omega_b)^2/24$, where $\omega_b=\sqrt{2V_0/(ma^2)}$. All Eckart integrals use a logarithmically stable evaluation of $T(E)$.\cite{eckart1930}
+
+Centroid QTST on the same barrier is obtained from umbrella PIMC along the centroid,
+\begin{equation}
+  \kcTST
+  =
+  \sqrt{\frac{\kB T}{2\pi m}}\,e^{-\beta F(0)},
+  \label{eq:ctst}
+\end{equation}
+with $F$ the WHAM potential of mean force, zeroed on the mean of the $|\xip|>1.6\,\text{\AA}$ tails so that $F(\infty)=0$. Eleven harmonic windows on $[-2,2]\,\text{\AA}$ with $k_{\mathrm{umb}}=60\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-2}$ are used, $P=32$ (H) and $P=24$ (D), $4\times 10^4$ production steps after $8\times 10^3$ equilibration. Residual tail scatter in $F$ is of order $0.5\,\mathrm{kJ\,mol}^{-1}$. Deuterium at $V_0=12\,\kB T$ is excluded from the rate comparison: the dividing-surface window drifted and produced the unphysical ordering $F_D(0)<F_H(0)$. With $\kappa=1$, Eq.~\eqref{eq:kQRR} equals Eq.~\eqref{eq:ctst} identically; both values are stored in the accompanying JSON.
 
 Temperatures are $300\,\mathrm{K}$ unless noted. Masses are $1$ and $2\,\mathrm{amu}$. Random number generators are seeded at $42$. Code and JSON outputs are in the repository accompanying this article.
 
@@ -232,7 +247,7 @@ Temperatures are $300\,\mathrm{K}$ unless noted. Masses are $1$ and $2\,\mathrm{
 
 \subsection{Harmonic oscillator}
 
-Figure~\ref{fig:harmonic} compares Eq.~\eqref{eq:chip_harm} with Levy-staging Monte Carlo for a $1000\,\mathrm{cm}^{-1}$ mode over $100$--$700\,\mathrm{K}$. At $300\,\mathrm{K}$ the continuum values are $\avg{\chip}_H=0.01011\,\text{\AA}^2$ and $\avg{\chip}_D=0.00572\,\text{\AA}^2$. With $P=64$ (H) and $P=32$ (D), the exact finite-bead formula differs from the continuum by $0.12\%$ and $0.29\%$, respectively, and the Monte Carlo root-mean-square relative error against Eq.~\eqref{eq:chip_P} is $0.56\%$ (H) and $1.03\%$ (D).
+Figure~\ref{fig:harmonic} compares Eq.~\eqref{eq:chip_harm} with L\'evy-staging Monte Carlo for a $1000\,\mathrm{cm}^{-1}$ mode over $100$--$700\,\mathrm{K}$. At $300\,\mathrm{K}$ the continuum values are $\avg{\chip}_H=0.01011\,\text{\AA}^2$ and $\avg{\chip}_D=0.00572\,\text{\AA}^2$. With $P=64$ (H) and $P=32$ (D), the exact finite-bead formula differs from the continuum by $0.12\%$ and $0.29\%$, respectively, and the Monte Carlo root-mean-square relative error against Eq.~\eqref{eq:chip_P} is $0.56\%$ (H) and $1.03\%$ (D).
 
 The isotope ratio $\mathcal{R}(T)$ increases from $1.52$ at $100\,\mathrm{K}$ toward $\sqrt{2}$ as $T$ is lowered, and from $1.77$ at $300\,\mathrm{K}$ to $1.94$ at $700\,\mathrm{K}$, approaching $2$ from below, as required by Corollary~\ref{cor:isotope} [Fig.~\ref{fig:harmonic}(b)]. Figure~\ref{fig:harmonic}(c) shows that the primitive estimator tracks Eq.~\eqref{eq:chip_P} from $P=4$ to $P=128$ and that the Trotter error relative to the continuum is already below $0.5\%$ at $P=32$ for this frequency and temperature. A staging move that draws Brownian-bridge \emph{marginals} independently, rather than the sequential L\'evy construction, produces a spurious increase of $\avg{\chip}$ with $P$ and should not be used.
 
@@ -241,7 +256,7 @@ The isotope ratio $\mathcal{R}(T)$ increases from $1.52$ at $100\,\mathrm{K}$ to
 \includegraphics[width=0.95\textwidth]{../figures/fig2_harmonic.pdf}
 \caption{\label{fig:harmonic}
 Harmonic path spread for $\omega=1000\,\mathrm{cm}^{-1}$.
-(a)~$\avg{\chip}(T)$ from Eq.~\eqref{eq:chip_harm} (lines) and Levy-staging PIMC (symbols).
+(a)~$\avg{\chip}(T)$ from Eq.~\eqref{eq:chip_harm} (lines) and L\'evy-staging PIMC (symbols).
 (b)~Isotope ratio, with the $T\to 0$ limit $\sqrt{2}$ and the $T\to\infty$ limit $2$.
 (c)~Bead convergence of $\avg{\chip}_H$ at $300\,\mathrm{K}$: PIMC versus the exact finite-$P$ formula, Eq.~\eqref{eq:chip_P}.
 }
@@ -249,35 +264,42 @@ Harmonic path spread for $\omega=1000\,\mathrm{cm}^{-1}$.
 
 \subsection{Eckart barrier}
 
-The symmetric Eckart barrier with width $a=0.50\,\text{\AA}$ provides thermal rates that do not depend on path-integral sampling. Figure~\ref{fig:eckart}(a) shows the exact tunneling correction $\kappa=k/k_{\mathrm{TST}}$ at $300\,\mathrm{K}$. For H, $\kappa$ increases from $1.28$ at $V_0=4\,\kB T$ to $2.68$ at $V_0=16\,\kB T$; the corresponding Wigner factors are $1.22$ and $1.86$. Wigner is therefore a useful first correction at moderate $\hbar\omega_b/\kB T$ and underestimates the exact $\kappa$ once $\hbar\omega_b/\kB T\gtrsim 4$. Deuterium remains closer to TST, as expected from the lower barrier frequency.
+The symmetric Eckart barrier with width $a=0.50\,\text{\AA}$ supplies exact thermal rates that do not depend on path-integral sampling, and therefore a test of Eq.~\eqref{eq:identity}: $\kQRR$ at $\kappa=1$ is $\kcTST$, and that number can be compared with the exact scattering rate.
 
-The exact KIE [Fig.~\ref{fig:eckart}(b) and Table~\ref{tab:eckart}] is $1.68$ at $4\,\kB T$ and $2.28$ at $16\,\kB T$. Classical TST contributes only $\sqrt{m_D/m_H}=\sqrt{2}\approx 1.414$, independent of barrier height. The Wigner KIE tracks the exact result qualitatively ($1.55$ to $1.84$) but lags at the highest barriers. These numbers set the scale of the nuclear quantum effect that a path-spread diagnostic is meant to resolve. They are \emph{not} QRR rates: the Eckart calculation is exact one-dimensional scattering, used here as an independent benchmark of when tunneling matters.
+Figure~\ref{fig:eckart}(a) and Table~\ref{tab:eckart} compare four estimates of $\kappa=k/k_{\mathrm{TST}}$ at $300\,\mathrm{K}$. The exact $\kappa_H$ increases from $1.28$ at $V_0=4\,\kB T$ to $2.68$ at $V_0=16\,\kB T$; the corresponding Wigner factors are $1.22$ and $1.86$. Wigner is a useful first correction at moderate $\hbar\omega_b/\kB T$ and underestimates the exact $\kappa$ once $\hbar\omega_b/\kB T\gtrsim 4$. Centroid QTST from umbrella PIMC gives $\kappa_H=1.54$, $1.98$, and $2.30$ at $4$, $8$, and $12\,\kB T$, versus exact $1.28$, $1.60$, and $2.04$ (overestimates of $20\%$, $24\%$, and $13\%$). Deuterium is overestimated by $40\%$ and $10\%$ at $4$ and $8\,\kB T$. In every converged case $F(0)<V_0$, so $\kappa_{\mathrm{cTST}}>1$ and the nuclear quantum effect has the correct sign. Deuterium at $12\,\kB T$ is omitted: the dividing-surface umbrella drifted and produced the unphysical ordering $F_D(0)<F_H(0)$.
 
-\begin{table}[htbp]
+The exact KIE [Fig.~\ref{fig:eckart}(b)] is $1.68$ at $4\,\kB T$ and $2.28$ at $16\,\kB T$, against a classical factor $\sqrt{2}\approx 1.414$. Centroid QTST gives $1.44$ and $1.98$ at $4$ and $8\,\kB T$: it barely exceeds classical at the lowest barrier, where H and D overshoot by similar factors, and it overshoots the exact KIE at $8\,\kB T$. These comparisons are the numerical content of Eq.~\eqref{eq:kQRR} at $\kappa=1$. They are not a claim that QRR improves on QTST.
+
+Figure~\ref{fig:eckart}(c) is the diagnostic that the integrated rate does not report. At the dividing surface, $f_{\mathrm{deloc}}^{\mathrm{H}}=0.22$, $0.23$, and $0.38$ at $4$, $8$, and $12\,\kB T$, while $f_{\mathrm{deloc}}^{\mathrm{D}}$ remains $0.017$. The jump at $12\,\kB T$ for H is sampled with $629$ dividing-surface configurations and should be read as a trend, not a precise fraction. The isotope contrast of an order of magnitude is the robust result.
+
+\begin{table*}[htbp]
 \caption{\label{tab:eckart}
 Symmetric Eckart barrier at $T=300\,\mathrm{K}$, $a=0.50\,\text{\AA}$.
 $\kappa=k/k_{\mathrm{TST}}$.
+Centroid QTST is umbrella PIMC; QRR at $\kappa=1$ equals that column.
+Dashes mark points that were not computed, or D at $12\,\kB T$, which failed the dividing-surface check.
 Classical KIE is $\sqrt{2}$ at every barrier.
 }
 \begin{ruledtabular}
-\begin{tabular}{lccccc}
-$V_0/\kB T$ & $\hbar\omega_b^H/\kB T$ & $\kappa_H$ & $\kappa_D$ & KIE (exact) & KIE (Wigner) \\
+\begin{tabular}{lccccccccc}
+$V_0/\kB T$ & $\kappa_H^{\mathrm{ex}}$ & $\kappa_H^{\mathrm{W}}$ & $\kappa_H^{\mathrm{cTST}}$ & $\kappa_D^{\mathrm{ex}}$ & $\kappa_D^{\mathrm{W}}$ & $\kappa_D^{\mathrm{cTST}}$ & KIE$^{\mathrm{ex}}$ & KIE$^{\mathrm{W}}$ & KIE$^{\mathrm{cTST}}$ \\
 \hline
-$4$  & $2.27$ & $1.28$ & $1.08$ & $1.68$ & $1.55$ \\
-$8$  & $3.22$ & $1.60$ & $1.28$ & $1.77$ & $1.67$ \\
-$12$ & $3.94$ & $2.04$ & $1.36$ & $2.12$ & $1.76$ \\
-$16$ & $4.55$ & $2.68$ & $1.66$ & $2.28$ & $1.84$ \\
+$4$  & $1.28$ & $1.22$ & $1.54$ & $1.08$ & $1.11$ & $1.51$ & $1.68$ & $1.55$ & $1.44$ \\
+$8$  & $1.60$ & $1.43$ & $1.98$ & $1.28$ & $1.22$ & $1.41$ & $1.77$ & $1.67$ & $1.98$ \\
+$12$ & $2.04$ & $1.65$ & $2.30$ & $1.36$ & $1.32$ & --- & $2.12$ & $1.76$ & --- \\
+$16$ & $2.68$ & $1.86$ & --- & $1.66$ & $1.43$ & --- & $2.28$ & $1.84$ & --- \\
 \end{tabular}
 \end{ruledtabular}
-\end{table}
+\end{table*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.95\textwidth]{../figures/fig4_eckart.pdf}
 \caption{\label{fig:eckart}
 Symmetric Eckart barrier, $a=0.50\,\text{\AA}$, $T=300\,\mathrm{K}$.
-(a)~Exact and Wigner tunneling corrections versus barrier height.
+(a)~Tunneling correction $\kappa=k/k_{\mathrm{TST}}$. Diamonds are umbrella-PIMC centroid QTST, equal to QRR at $\kappa=1$. Deuterium at $12\,\kB T$ is omitted (dividing-surface window not converged).
 (b)~Kinetic isotope effect. Classical TST is $\sqrt{2}$ at every $V_0$.
+(c)~Delocalized weight at the dividing surface, $2\chi_c=0.020\,\text{\AA}^2$.
 }
 \end{figure*}
 
@@ -285,7 +307,7 @@ Symmetric Eckart barrier, $a=0.50\,\text{\AA}$, $T=300\,\mathrm{K}$.
 
 The ADW $V(q)=V_0[(q/q_0)^2-1]^2+\alpha q$ with $q_0=0.70\,\text{\AA}$ is a bound proton-transfer model. Figure~\ref{fig:landscape}(a) shows the WHAM centroid PMF at $V_0=8\,\kB T$: the H barrier is $15.9\,\mathrm{kJ\,mol}^{-1}$ and the D barrier is $17.6\,\mathrm{kJ\,mol}^{-1}$. Figure~\ref{fig:landscape}(b) is the quantity QRR actually uses, the dividing-surface density $p^\ddagger(\chip)$. It is broader for H than for D, with means $\avg{\chip}_\ddagger^{\mathrm{H}}=0.015\,\text{\AA}^2$ and $\avg{\chip}_\ddagger^{\mathrm{D}}=0.008\,\text{\AA}^2$. With the bookkeeping cut $2\chi_c=0.020\,\text{\AA}^2$, the delocalized weight is $f_{\mathrm{deloc}}^{\mathrm{H}}=0.18$--$0.23$ across $V_0=2$--$8\,\kB T$, versus $f_{\mathrm{deloc}}^{\mathrm{D}}=0.014$--$0.045$ [Fig.~\ref{fig:landscape}(c) and Table~\ref{tab:adw}]. For H the fraction is essentially flat in this barrier window; the robust observation is the isotope contrast, not a strong barrier trend.
 
-These are equilibrium path-class statistics, not rates. We do not convert $f_{\mathrm{deloc}}$ into a QRR rate or into a claimed improvement over RPMD. Two-dimensional histograms of $F(\xip,\chip)$ from the same umbrellas are too sparsely sampled in $\chip$ to publish as free-energy surfaces.
+These are equilibrium path-class statistics. The isolated ADW is a bound well and has no irreversible thermal rate, so we do not convert $f_{\mathrm{deloc}}$ into a QRR rate, nor into a claimed improvement over RPMD. Two-dimensional histograms of $F(\xip,\chip)$ from the same umbrellas are too sparsely sampled in $\chip$ to publish as free-energy surfaces.
 
 \begin{table}[htbp]
 \caption{\label{tab:adw}
@@ -325,15 +347,15 @@ A bilinear proton--solvent model $V=V_{\mathrm{ADW}}(q_p)+\tfrac12 k_s q_s^2+\ka
 
 QRR does not replace RPMD, instanton theory, or vibronic PCET rate laws.\cite{craig2005,richardson2018,soudackov2000,goldsmith2019} RPMD remains the appropriate dynamical correction to centroid QTST in the crossover regime; instanton theory remains the appropriate semiclassical description when a single tunneling orbit dominates; Hammes--Schiffer vibronic theory remains the appropriate nonadiabatic framework when electron-proton nonadiabaticity is essential. What $\chip$ adds is an equilibrium resolution of imaginary-time geometries that those methods otherwise average or optimize.
 
-The present calculations do not evaluate Eq.~\eqref{eq:kQRR} as a rate. Doing so would require a class-conditional transmission coefficient, which we have not computed. The Eckart section reports exact scattering rates; the ADW section reports $p^\ddagger(\chip)$. Connecting the two is an analogy, not a numerical identity.
+The present calculations evaluate Eq.~\eqref{eq:kQRR} only at $\kappa=1$, where it is identical to $\kcTST$. A class-conditional transmission coefficient is not computed. On the Eckart barrier that common rate overestimates the exact scattering result by $13$--$40\%$ on converged points, as expected for a recrossing-free centroid theory; QRR cannot reduce that error without a genuine $\kappa(\chip)$. The ADW section reports $p^\ddagger(\chip)$ only. Connecting the two models is an analogy: the isolated double well has no irreversible thermal rate.
 
 Two condensed-phase hypotheses follow, and should be treated as such. First, if an increase of the observed KIE with driving force\cite{goldsmith2019,koper2011} is carried by tunneling-like paths, $\Delta f_{\mathrm{deloc}}=f_{\mathrm{deloc}}^{\mathrm{H}}-f_{\mathrm{deloc}}^{\mathrm{D}}$ should increase with that driving force. Second, a breakdown of $F=F_p+F_s$ at the dividing surface would be a signature of proton--solvent coupling beyond a product Marcus picture. Neither hypothesis is tested here.
 
-Limitations are sharp. $\chip$ is an imaginary-time polymer statistic, not a spectroscopic observable. The cut $\chi_c$ is bookkeeping; Fig.~\ref{fig:landscape}(b) is the primary object. Recrossing is not resolved by class. The models are one-dimensional. Finite-$P$ errors in $\chip$ are under control for the $1000\,\mathrm{cm}^{-1}$ mode at $P\ge 32$; stiffer stretches will need more beads or a virial estimator.
+Limitations are sharp. $\chip$ is an imaginary-time polymer statistic, not a spectroscopic observable. The cut $\chi_c$ is bookkeeping; Fig.~\ref{fig:landscape}(b) is the primary object. Recrossing is not resolved by class. The models are one-dimensional. Residual WHAM tail scatter of order $0.5\,\mathrm{kJ\,mol}^{-1}$ limits the precision of $\kappa_{\mathrm{cTST}}$ at the lowest Eckart barrier. Finite-$P$ errors in $\chip$ are under control for the $1000\,\mathrm{cm}^{-1}$ mode at $P\ge 32$; stiffer stretches will need more beads or a virial estimator.
 
 \section{Conclusions}
 
-We have defined a projected ring-polymer path spread $\chip$ for proton transfer, derived its harmonic continuum and finite-bead limits, and used it to resolve the centroid dividing-surface ensemble. Levy-staging Monte Carlo reproduces the exact finite-bead harmonic formula to about one percent. Exact Eckart rates quantify when tunneling corrections and KIEs depart from TST. On an asymmetric double well, the dividing-surface path-spread distribution is robustly broader for H than for D. Equation~\eqref{eq:kQRR} is a bookkeeping decomposition of QTST; it is not shown here to be a better rate. The estimator is a collective variable and can be accumulated in any path-integral molecular dynamics run.
+We have defined a projected ring-polymer path spread $\chip$ for proton transfer, derived its harmonic continuum and finite-bead limits, and used it to resolve the centroid dividing-surface ensemble. L\'evy-staging Monte Carlo reproduces the exact finite-bead harmonic formula to about one percent. Exact Eckart rates quantify when tunneling corrections and KIEs depart from TST. Umbrella PIMC centroid QTST, equal to QRR at $\kappa=1$, overestimates those exact rates while capturing the sign of the nuclear quantum effect and assigning a much larger delocalized weight to H than to D. On an asymmetric double well the dividing-surface path-spread distribution is robustly broader for H than for D. Equation~\eqref{eq:kQRR} is a bookkeeping decomposition of QTST; it is not shown here to be a better rate. The estimator is a collective variable and can be accumulated in any path-integral molecular dynamics run.
 
 \begin{acknowledgments}
 Computational work was performed on local workstations. No external funding is declared.

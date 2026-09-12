@@ -25,6 +25,7 @@ CANONICAL_FIGURES = {
 
 EXPERIMENT_SCRIPTS = [
     ("run_eckart.py", ""),
+    ("run_eckart_pimc.py", "--n_steps {n_pimc} --n_equil {n_equil_pimc}"),
     ("run_harmonic.py", "--n_steps {n_steps} --n_equil {n_equil}"),
     ("run_adw.py", "--n_steps {n_adw} --n_equil {n_equil_adw}"),
     ("run_2d.py", "--n_steps {n_2d} --n_equil {n_equil_2d}"),
@@ -72,6 +73,7 @@ def stage_experiments(n_steps, n_equil):
             n_steps=n_steps, n_equil=n_equil,
             n_adw=n_adw, n_equil_adw=max(n_equil // 2, 4000),
             n_2d=n_2d, n_equil_2d=max(n_equil // 2, 8000),
+            n_pimc=min(n_steps, 40_000), n_equil_pimc=min(n_equil, 8_000),
         )
         cmd = [sys.executable, os.path.join(SRC_EXP, script)]
         if args_str.strip():

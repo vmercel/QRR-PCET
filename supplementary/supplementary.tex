@@ -90,19 +90,32 @@ Harmonic $P$ (H, D) & $64$, $32$ \\
 Harmonic production steps & $8\times 10^4$ \\
 Eckart width $a$ & $0.50\,\text{\AA}$ \\
 Eckart $T$ & $300\,\mathrm{K}$ \\
+Eckart PIMC $P$ (H, D) & $32$, $24$ \\
+Eckart PIMC umbrellas & $11$ windows in $[-2,2]\,\text{\AA}$ \\
+Eckart PIMC $k_{\mathrm{umb}}$ & $60\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-2}$ \\
+Eckart PIMC steps per window & $4\times 10^4$ ($8\times 10^3$ equilibration) \\
 ADW $q_0$ & $0.70\,\text{\AA}$ \\
 ADW $\alpha$ & $0.025\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-1}$ \\
 ADW umbrellas & $11$ windows in $[-1,1]\,\text{\AA}$ \\
 ADW $k_{\mathrm{umb}}$ & $80\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-2}$ \\
 ADW $P$ (H, D) & $32$, $24$ \\
 ADW steps per window & $5\times 10^4$ \\
-2D $k_s$ & $2.0\,\mathrm{kJ\,mol}^{-1}\,\text{\AA}^{-2}$ \\
 RNG seed & $42$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Staging proposals use the sequential L\'evy construction of the free-particle bridge (endpoints of a segment of length $L=P/4$ held fixed; interior beads drawn conditionally). Independent sampling of Brownian-bridge marginals is incorrect and inflates $\chip$ at large $P$.
+
+\section{Eckart centroid QTST}
+
+On the symmetric Eckart barrier the centroid QTST rate is
+\[
+  k_{\mathrm{cTST}}=\sqrt{k_{\mathrm{B}}T/(2\pi m)}\,e^{-\beta F(0)},
+\]
+with $F$ the WHAM potential of mean force zeroed on the $|\bar\xi_p|>1.6\,\text{\AA}$ tails. With a class-independent transmission coefficient $\kappa=1$, the QRR integral of the main text is identically $k_{\mathrm{cTST}}$. Residual tail scatter in $F$ is of order $0.5\,\mathrm{kJ\,mol}^{-1}$. Deuterium at $V_0=12\,k_{\mathrm{B}}T$ is excluded from the rate comparison: the dividing-surface window drifted and produced $F_D(0)<F_H(0)$, which is unphysical. Path-class fractions $f_{\mathrm{deloc}}$ at that point remain consistent with the other deuterium barriers and are retained in Fig.~4(c) of the main text.
+
+The isolated asymmetric double well is bound. It has no irreversible thermal rate, so DVR ``rates'' on that potential are not a benchmark.
 
 \section{Reproducibility}
 
